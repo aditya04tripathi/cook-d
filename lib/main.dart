@@ -1,3 +1,4 @@
+import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,27 +16,27 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green[500]!),
       ),
-      home: const DishsScreen(),
+      home: const DishScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class DishsScreen extends StatefulWidget {
-  const DishsScreen({super.key});
+class DishScreen extends StatefulWidget {
+  const DishScreen({super.key});
 
   @override
-  State<DishsScreen> createState() => _DishsScreenState();
+  State<DishScreen> createState() => _DishScreenState();
 }
 
-class _DishsScreenState extends State<DishsScreen>
+class _DishScreenState extends State<DishScreen>
     with AutomaticKeepAliveClientMixin {
   final PageController _horizontalController = PageController(
     initialPage: 1,
     keepPage: true,
   );
   late PageController _verticalController;
-  int _currentVerticalIndex = 1;
+  int _currentVerticalIndex = 0;
   int _currentHorizontalIndex = 1;
 
   @override
@@ -85,30 +86,52 @@ class _DishsScreenState extends State<DishsScreen>
             controller: _horizontalController,
             scrollDirection: Axis.horizontal,
             children: [
-              Center(
-                child: Text(
-                  "Sidebar",
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                ),
+              Container(
+                color: Colors.white,
+                child: Stack(children: [Center(child: Text("Sidebar"))]),
               ),
               KeepAliveWrapper(
-                child: PageView(
-                  controller: _verticalController,
-                  scrollDirection: Axis.vertical,
-                  children: <Widget>[
-                    DishCard(index: 0, color: Colors.blue),
-                    DishCard(index: 1, color: Colors.red),
-                    DishCard(index: 2, color: Colors.green),
-                    DishCard(index: 3, color: Colors.yellow),
-                    DishCard(index: 4, color: Colors.purple),
+                child: Stack(
+                  children: [
+                    PageView(
+                      controller: _verticalController,
+                      scrollDirection: Axis.vertical,
+                      children: <Widget>[
+                        DishCard(index: 0, color: Colors.blue),
+                        DishCard(index: 1, color: Colors.red),
+                        DishCard(index: 2, color: Colors.green),
+                        DishCard(index: 3, color: Colors.yellow),
+                        DishCard(index: 4, color: Colors.purple),
+                      ],
+                    ),
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      child: SafeArea(
+                        child: IconButton.filled(
+                          color: Colors.black,
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white,
+                          ),
+                          onPressed: () {
+                            _horizontalController.animateToPage(
+                              0,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          icon: Icon(Icons.menu),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Center(
-                child: Text(
-                  "Details",
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                ),
+              DraggableHome(
+                appBarColor: Colors.blue,
+                title: Text("Tandoori Chicken"),
+                headerWidget: ColoredBox(color: Colors.blue),
+                body: [Center(child: Text("Hello"))],
               ),
             ],
           ),
@@ -120,7 +143,7 @@ class _DishsScreenState extends State<DishsScreen>
 
 class KeepAliveWrapper extends StatefulWidget {
   final Widget child;
-  const KeepAliveWrapper({Key? key, required this.child}) : super(key: key);
+  const KeepAliveWrapper({super.key, required this.child});
 
   @override
   State<KeepAliveWrapper> createState() => _KeepAliveWrapperState();
@@ -145,14 +168,70 @@ class DishCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(color: color),
-      child: Center(
-        child: Text(
-          "Dish $index",
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+    return Stack(
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(color: color),
+          child: Center(
+            child: Text(
+              "Dish ${index + 1}",
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          right: 16,
+          top: 16,
+          child: SafeArea(
+            child: Container(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Center(
+                child: Text(
+                  "40.3km away",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          left: 32,
+          child: SafeArea(
+            child: Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              width: MediaQuery.of(context).size.width * 0.75,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Tandoori Chicken".length >= 20
+                        ? "${"Tandoori Chicken".substring(0, 20)}..."
+                        : "Tandoori Chicken",
+                    overflow: TextOverflow.fade,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Vishrut Aggarwal".length >= 20
+                        ? "${"Vishrut Aggarwal".substring(0, 20)}..."
+                        : "Vishrut Aggarwal",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
