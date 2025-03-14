@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/unihack_rn.iml" filepath="$PROJECT_DIR$/unihack_rn.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/unihack_rn_android.iml" filepath="$PROJECT_DIR$/android/unihack_rn_android.iml" />
+    </modules>
+  </component>
+</project>
