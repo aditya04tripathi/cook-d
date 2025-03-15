@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "475249759344",
+    "firebase_url": "https://men-matter-too-space-default-rtdb.firebaseio.com",
+    "project_id": "men-matter-too-space",
+    "storage_bucket": "men-matter-too-space.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475249759344:android:e1b4a202d67b8c65fbd0b5",
+        "android_client_info": {
+          "package_name": "com.adityatripathi.cook_d"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475249759344-bivbff6qfsk05o0018pln9r2sd8b3glg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW-J6ycZrxk8wbGOi7xIDnxkMoO4QsfXQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475249759344-bivbff6qfsk05o0018pln9r2sd8b3glg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

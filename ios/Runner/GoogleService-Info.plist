@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>475249759344-9bvd1cfbl4m9na5vifrs7757phio59it.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.475249759344-9bvd1cfbl4m9na5vifrs7757phio59it</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDtw_AOlT2zWX8rqbWaS1rjCNANt_ewvlU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>475249759344</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.adityatripathi.cookd</string>
+	<key>PROJECT_ID</key>
+	<string>men-matter-too-space</string>
+	<key>STORAGE_BUCKET</key>
+	<string>men-matter-too-space.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:475249759344:ios:0674930559ec3f12fbd0b5</string>
+	<key>DATABASE_URL</key>
+	<string>https://men-matter-too-space-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
