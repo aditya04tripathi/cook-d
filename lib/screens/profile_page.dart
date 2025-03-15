@@ -1,3 +1,4 @@
+import 'package:cook_d/screens/login_page.dart';
 import 'package:cook_d/screens/privacy_policy.dart';
 import 'package:cook_d/screens/tnc_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +17,16 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: const Text('Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -31,9 +41,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     CircleAvatar(
                       radius: 50,
                       child: Text(
-                        FirebaseAuth.instance.currentUser!.displayName!
-                            .substring(0, 2)
-                            .toUpperCase(),
+                        FirebaseAuth.instance.currentUser!.displayName ??
+                            "User".substring(0, 2).toUpperCase(),
                         style: TextStyle(fontSize: 36),
                       ),
                     ),
@@ -49,6 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
+            ProfileTile(title: 'My Meetups', icon: Icons.people_rounded),
             ProfileTile(
               title: 'Privacy Policy',
               onTap: () {
@@ -63,7 +73,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 Get.to(() => TncScreen());
               },
             ),
-            ProfileTile(title: 'My Meetups', icon: Icons.people_rounded),
             Expanded(child: SizedBox()),
             ProfileTile(
               title: 'Sign Out',
@@ -71,6 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
               bgColor: Colors.red,
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
+                Get.to(() => const LoginScreen());
               },
             ),
           ],

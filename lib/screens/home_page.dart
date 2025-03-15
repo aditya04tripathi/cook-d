@@ -1,27 +1,55 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cook_d/screens/add_screen.dart';
 import 'package:cook_d/screens/recipe_details.dart';
 import 'package:cook_d/screens/profile_page.dart';
 import 'package:cook_d/widgets/dish_card.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/instance_manager.dart';
 
+// Global index controller to share state
+class IndexController {
+  static final IndexController _instance = IndexController._internal();
+
+  factory IndexController() => _instance;
+
+  IndexController._internal();
+
+  int currentDishIndex = 0;
+  int currentPageIndex = 0;
+
+  final ValueNotifier<int> dishIndexNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<int> pageIndexNotifier = ValueNotifier<int>(0);
+
+  void updateDishIndex(int index) {
+    currentDishIndex = index;
+    dishIndexNotifier.value = index;
+  }
+
+  void updatePageIndex(int index) {
+    currentPageIndex = index;
+    pageIndexNotifier.value = index;
+  }
+}
+
 class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+  HomePage({super.key});
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final indexController = IndexController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add_rounded),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-      ),
       backgroundColor: Theme.of(context).colorScheme.primary,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.to(() => AddScreen());
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+        child: Icon(Icons.add_rounded),
+      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
@@ -64,73 +92,57 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class _buildListTileWidget extends StatelessWidget {
-  const _buildListTileWidget({
-    required this.title,
-    required this.onTap,
-    required this.icon,
-  });
-
-  final String title;
-  final Function onTap;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onTap(),
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(64),
-              blurRadius: 5,
-              offset: const Offset(0, 2),
-            ),
-          ],
-          color: Theme.of(context).colorScheme.primary.withAlpha(192),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.white),
-            const SizedBox(width: 10),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class HorizontalPagesWidget extends StatefulWidget {
   final QuerySnapshot dishes;
-  const HorizontalPagesWidget({Key? key, required this.dishes})
-    : super(key: key);
+  const HorizontalPagesWidget({super.key, required this.dishes});
 
   @override
   State<HorizontalPagesWidget> createState() => _HorizontalPagesWidgetState();
 }
 
 class _HorizontalPagesWidgetState extends State<HorizontalPagesWidget> {
-  final ValueNotifier<int> _pageIndex = ValueNotifier<int>(0);
-  final PageController _pageController = PageController(initialPage: 0);
-  final ValueNotifier<int> _dishIndex = ValueNotifier<int>(0);
+  late PageController _pageController;
+  late PageController _verticalController;
+  final indexController = IndexController();
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      initialPage: indexController.currentPageIndex,
+    );
+    _verticalController = PageController(
+      initialPage: indexController.currentDishIndex,
+    );
+
+    // Listen for changes in page index
+    indexController.pageIndexNotifier.addListener(() {
+      if (_pageController.page?.round() != indexController.currentPageIndex) {
+        _pageController.animateToPage(
+          indexController.currentPageIndex,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+
+    // Listen for changes in dish index
+    indexController.dishIndexNotifier.addListener(() {
+      if (_verticalController.page?.round() !=
+          indexController.currentDishIndex) {
+        _verticalController.animateToPage(
+          indexController.currentDishIndex,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
 
   @override
   void dispose() {
-    _pageIndex.dispose();
     _pageController.dispose();
-    _dishIndex.dispose();
+    _verticalController.dispose();
     super.dispose();
   }
 
@@ -139,32 +151,37 @@ class _HorizontalPagesWidgetState extends State<HorizontalPagesWidget> {
     return PageView(
       controller: _pageController,
       scrollDirection: Axis.horizontal,
-      onPageChanged: (index) => _pageIndex.value = index,
+      onPageChanged: (index) {
+        indexController.updatePageIndex(index);
+      },
       children: [
-        // First page - Dish cards
         PageView.builder(
           scrollDirection: Axis.vertical,
           itemCount: widget.dishes.docs.length,
+          controller: _verticalController,
           itemBuilder: (context, index) {
             final dish = widget.dishes.docs[index];
-            _dishIndex.value = index; // Update current dish index
             return DishCard(context, data: dish);
           },
           onPageChanged: (index) {
-            _dishIndex.value = index;
+            indexController.updateDishIndex(index);
           },
         ),
-        // Second page - Recipe details
         ValueListenableBuilder<int>(
-          valueListenable: _dishIndex,
-          builder: (context, index, _) {
-            final dish = widget.dishes.docs[index];
+          valueListenable: indexController.dishIndexNotifier,
+          builder: (context, currentIndex, _) {
             return Container(
               height: double.infinity,
               width: double.infinity,
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Column(
-                children: [Expanded(child: RecipeDetailPage(dish: dish))],
+                children: [
+                  Expanded(
+                    child: RecipeDetailPage(
+                      dish: widget.dishes.docs[currentIndex],
+                    ),
+                  ),
+                ],
               ),
             );
           },

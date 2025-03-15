@@ -17,15 +17,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isPasswordHidden = true;
   bool isRePasswordHidden = true;
 
-  TextEditingController emailController = TextEditingController(
-    text: "atri0048@student.monash.edu",
-  );
-  TextEditingController passwordController = TextEditingController(
-    text: "1234567890",
-  );
-  TextEditingController rePasswordController = TextEditingController(
-    text: "1234567890",
-  );
+  TextEditingController emailController = TextEditingController(text: "");
+  TextEditingController passwordController = TextEditingController(text: "");
+  TextEditingController rePasswordController = TextEditingController(text: "");
 
   void registerUser() async {
     try {

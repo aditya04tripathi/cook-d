@@ -16,11 +16,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordHidden = true;
 
-  final TextEditingController emailController = TextEditingController(
-    text: "atri0048@student.monash.edu",
-  );
+  final TextEditingController emailController = TextEditingController(text: "");
   final TextEditingController passwordController = TextEditingController(
-    text: "1234567890",
+    text: "",
   );
 
   void loginUser() async {
@@ -41,8 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
         email: email,
         password: password,
       );
-
-      Get.snackbar("Success", "Logged in successfully");
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         "Error",
