@@ -1,17 +1,31 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cook_d/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-Widget DishCard(BuildContext context) {
+Widget DishCard(BuildContext context, {required data}) {
   return Container(
     decoration: BoxDecoration(),
     child: ClipRRect(
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset("assets/images/tandoori.jpg", fit: BoxFit.cover),
+          data["image"].isNotEmpty
+              ? Image(
+                image: CachedNetworkImageProvider(data["image"]),
+                fit: BoxFit.cover,
+                width: 250,
+                height: 250,
+              )
+              : Image.asset(
+                'assets/images/can_tower.jpg',
+                fit: BoxFit.cover,
+                width: 250,
+                height: 250,
+              ),
           Positioned(
             top: 0,
             left: 0,
@@ -55,7 +69,7 @@ Widget DishCard(BuildContext context) {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
-                        "📍 LTB ⏰ 30m ago",
+                        "📍 ${data["location"]} ⏰ ${data["time"]}",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -87,7 +101,7 @@ Widget DishCard(BuildContext context) {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'TOWER OF CANS',
+                    data["name"],
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -98,7 +112,7 @@ Widget DishCard(BuildContext context) {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: Text(
-                      '#chicken #free #food #tandoori #chicken #free #food #tandoori',
+                      data["hashtags"].join(" "),
                       style: TextStyle(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
@@ -123,7 +137,7 @@ Widget DishCard(BuildContext context) {
                           ),
                         ),
                         child: Text(
-                          'COUNT ME IN (4/10)',
+                          'COUNT ME IN (${data["spots"]}/10)',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -145,7 +159,7 @@ Widget DishCard(BuildContext context) {
                               ),
                             ),
                             Text(
-                              "4",
+                              (new Random().nextInt(15) + 5).toString(),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.white,

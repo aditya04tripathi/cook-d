@@ -54,22 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   int height = 0;
 
-  void uploadData() async {
-    for (final recipe in data) {
-      await FirebaseFirestore.instance.collection("dishes").add({
-        "name": recipe["name"],
-        "desc": recipe["desc"],
-        "rating": recipe["rating"],
-        "prep_time": recipe["prep_time"],
-        "energy": recipe["energy"],
-        "image": "",
-        "ingredients": recipe["ingredients"],
-        "allergy": recipe["allergy"],
-        "macros": recipe["macros"],
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(height: 16),
-              CustomButton(onPressed: uploadData, title: "Login"),
+              CustomButton(onPressed: loginUser, title: "Login"),
               SizedBox(height: 16),
               GestureDetector(
                 onTap: () {

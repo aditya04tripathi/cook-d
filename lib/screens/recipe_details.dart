@@ -1,6 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class RecipeDetailPage extends StatelessWidget {
+  const RecipeDetailPage({Key? key, required this.dish}) : super(key: key);
+
+  final QueryDocumentSnapshot<Object?> dish;
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -10,12 +16,20 @@ class RecipeDetailPage extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.4,
-            child: Image.asset(
-              'assets/images/can_tower.jpg',
-              fit: BoxFit.cover,
-              width: 250,
-              height: 250,
-            ),
+            child:
+                dish["image"].isNotEmpty
+                    ? Image(
+                      image: CachedNetworkImageProvider(dish["image"]),
+                      fit: BoxFit.cover,
+                      width: 250,
+                      height: 250,
+                    )
+                    : Image.asset(
+                      'assets/images/can_tower.jpg',
+                      fit: BoxFit.cover,
+                      width: 250,
+                      height: 250,
+                    ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -23,13 +37,13 @@ class RecipeDetailPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Fried Shrimp',
+                  dish["name"],
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'This is my kind of breakfast egg sandwich\nand it takes under 5 minutes to make',
+                  dish["desc"],
                   style: TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
@@ -38,13 +52,13 @@ class RecipeDetailPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.star),
-                    Text('4.8(163)', style: TextStyle()),
+                    Text(dish["rating"].toString(), style: TextStyle()),
                     const SizedBox(width: 16),
                     Icon(Icons.access_time),
-                    Text('20 min', style: TextStyle()),
+                    Text(dish["prep_time"], style: TextStyle()),
                     const SizedBox(width: 16),
                     Icon(Icons.local_fire_department_outlined),
-                    Text('150 kcal', style: TextStyle()),
+                    Text("${dish["energy"]}kcal", style: TextStyle()),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -52,56 +66,68 @@ class RecipeDetailPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Ingridients',
+                      'Ingredients',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('7 item', style: TextStyle()),
+                    Text(
+                      '${dish["ingredients"].length} item(s)',
+                      style: TextStyle(),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
-                  height: 120,
-                  child: ListView(
+                  height: 40,
+                  child: ListView.separated(
+                    itemCount: dish["ingredients"].length,
                     scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildIngredientItem(context, 'Broccoli', Icons.eco),
-                      SizedBox(width: 16),
-                      _buildIngredientItem(context, 'Chili', Icons.whatshot),
-                      SizedBox(width: 16),
-                      _buildIngredientItem(context, 'Corn', Icons.grass),
-                      SizedBox(width: 16),
-                      _buildIngredientItem(context, 'Carrot', Icons.grain),
-                      SizedBox(width: 16),
-                      _buildIngredientItem(context, 'Corn', Icons.grass),
-                    ],
+                    itemBuilder: (context, index) {
+                      final ingredient = dish["ingredients"][index];
+                      return _buildIngredientItem(context, ingredient);
+                    },
+                    separatorBuilder: (context, index) => SizedBox(width: 8),
                   ),
                 ),
                 const SizedBox(height: 24),
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.warning_rounded, color: Colors.white),
-                      SizedBox(width: 8),
-                      Text(
-                        "Might contain allergens",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                dish["allergy"].isNotEmpty
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'May contain',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                        Text(
+                          '${dish["allergy"].length} item(s)',
+                          style: TextStyle(),
+                        ),
+                      ],
+                    )
+                    : SizedBox(),
+                dish['allergy'].isNotEmpty
+                    ? const SizedBox(height: 16)
+                    : SizedBox(),
+                dish["allergy"].isNotEmpty
+                    ? SizedBox(
+                      height: 40,
+                      child: ListView.separated(
+                        itemCount: dish["allergy"].length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final ingredient = dish["allergy"][index];
+                          return _buildAllergenItem(context, ingredient);
+                        },
+                        separatorBuilder:
+                            (context, index) => SizedBox(width: 8),
                       ),
-                    ],
-                  ),
-                ),
+                    )
+                    : SizedBox(),
               ],
             ),
           ),
@@ -110,27 +136,38 @@ class RecipeDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildIngredientItem(
-    BuildContext context,
-    String name,
-    IconData icon,
-  ) {
+  Widget _buildIngredientItem(BuildContext context, String name) {
     return Container(
-      width: 80,
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(12),
       ),
+      constraints: BoxConstraints(minWidth: 100),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: Icon(icon, color: Colors.white, size: 24),
+          Text(
+            name,
+            style: TextStyle(color: Colors.white),
+            textAlign: TextAlign.center,
           ),
-          SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAllergenItem(BuildContext context, String name) {
+    return Container(
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      constraints: BoxConstraints(minWidth: 100),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
           Text(
             name,
             style: TextStyle(color: Colors.white),
