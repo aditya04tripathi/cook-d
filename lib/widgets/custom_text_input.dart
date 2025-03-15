@@ -23,19 +23,27 @@ class CustomTextInput extends StatelessWidget {
     return Container(
       height: 60,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.all(Radius.circular(100)),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary,
+          width: 2,
+        ),
       ),
       child: TextField(
         controller: controller,
         obscureText: isPassword,
+        style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.black),
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Icon(prefixIcon, color: Color.fromARGB(255, 28, 46, 17)),
+            child: Icon(
+              prefixIcon,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           suffixIcon:
               isPassword
                   ? IconButton(
@@ -43,7 +51,7 @@ class CustomTextInput extends StatelessWidget {
                       obscureText
                           ? Icons.visibility_rounded
                           : Icons.visibility_off_rounded,
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     onPressed: onToggleVisibility,
                   )

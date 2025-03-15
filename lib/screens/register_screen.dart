@@ -2,7 +2,6 @@ import 'package:cook_d/widgets/custom_button.dart';
 import 'package:cook_d/widgets/custom_text_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
