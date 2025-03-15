@@ -1,7 +1,10 @@
+import 'package:cook_d/screens/login_page.dart';
 import 'package:cook_d/widgets/custom_button.dart';
 import 'package:cook_d/widgets/custom_text_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,7 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isRePasswordHidden = true;
 
   TextEditingController emailController = TextEditingController(
-    text: "adityatripathi.at04@gmail.com",
+    text: "atri0048@student.monash.edu",
   );
   TextEditingController passwordController = TextEditingController(
     text: "1234567890",
@@ -25,19 +28,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
   );
 
   void registerUser() async {
-    debugPrint("Registering user...");
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+      if (passwordController.text != rePasswordController.text) {
+        Get.snackbar("Error", "Passwords do not match!");
+        return;
+      }
+
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+
+      await userCredential.user!.updateDisplayName(
+        emailController.text.split("@").first,
       );
+
+      emailController.clear();
+      passwordController.clear();
+      rePasswordController.clear();
+
+      Get.snackbar("Success", "You have successfully registered!");
+
+      Get.to(() => LoginScreen());
     } on FirebaseAuthException catch (e) {
-      AlertDialog.adaptive(
-        title: Text("Error!"),
-        content: Text(e.message ?? "An error occurred!"),
-      );
+      Get.snackbar("Error", e.message!);
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
+      Get.snackbar("Error", e.toString());
     }
   }
 

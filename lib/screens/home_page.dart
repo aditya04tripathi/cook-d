@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cook_d/screens/recipe_details.dart';
+import 'package:cook_d/screens/profile_page.dart';
 import 'package:cook_d/widgets/dish_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:get/instance_manager.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -13,59 +16,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawer(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20),
-            bottomRight: Radius.circular(20),
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 150,
-                width: 150,
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              _buildListTileWidget(
-                title: 'Home',
-                icon: Icons.home_rounded,
-                onTap: () {},
-              ),
-              _buildListTileWidget(
-                title: 'Settings',
-                icon: Icons.settings_rounded,
-                onTap: () {},
-              ),
-              Expanded(child: SizedBox()),
-              ListTile(
-                leading: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.white,
-                  child: const Text(
-                    "AT",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                title: Text(
-                  "Aditya Tripathi",
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Text(
-                  "adityatripathi.at04@gmail.com",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _scaffoldKey.currentState?.openDrawer();
-        },
+        onPressed: () {},
         child: Icon(Icons.add_rounded),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
       ),
@@ -83,16 +35,12 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout_rounded, color: Colors.white),
+            icon: const Icon(Icons.settings_rounded, color: Colors.white),
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              Get.to(() => ProfilePage());
             },
           ),
         ],
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.menu_rounded, color: Colors.white),
-        ),
       ),
       body: SafeArea(
         child: FutureBuilder(
@@ -103,7 +51,6 @@ class HomePage extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
-              debugPrint('Data: ${snapshot.data.toString()}');
               final dishes = snapshot.data as QuerySnapshot;
               if (dishes.docs.isNotEmpty) {
                 return HorizontalPagesWidget(dishes: dishes);
@@ -119,7 +66,6 @@ class HomePage extends StatelessWidget {
 
 class _buildListTileWidget extends StatelessWidget {
   const _buildListTileWidget({
-    super.key,
     required this.title,
     required this.onTap,
     required this.icon,

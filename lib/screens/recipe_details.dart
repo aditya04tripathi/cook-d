@@ -55,7 +55,7 @@ class RecipeDetailPage extends StatelessWidget {
                     Text(dish["rating"].toString(), style: TextStyle()),
                     const SizedBox(width: 16),
                     Icon(Icons.access_time),
-                    Text(dish["prep_time"], style: TextStyle()),
+                    Text("${dish["prep_time"]}m", style: TextStyle()),
                     const SizedBox(width: 16),
                     Icon(Icons.local_fire_department_outlined),
                     Text("${dish["energy"]}kcal", style: TextStyle()),

@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cook_d/screens/register_screen.dart';
-import 'package:cook_d/synthetic_data.dart';
 import 'package:cook_d/widgets/custom_button.dart';
 import 'package:cook_d/widgets/custom_text_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordHidden = true;
 
   final TextEditingController emailController = TextEditingController(
-    text: "adityatripathi.at04@gmail.com",
+    text: "atri0048@student.monash.edu",
   );
   final TextEditingController passwordController = TextEditingController(
     text: "1234567890",
@@ -43,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
         email: email,
         password: password,
       );
+
+      Get.snackbar("Success", "Logged in successfully");
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         "Error",
@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width * 0.5,
                 child: Image.asset("assets/images/logo.png"),
               ),

@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cook_d/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -69,7 +68,7 @@ Widget DishCard(BuildContext context, {required data}) {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
-                        "📍 ${data["location"]} ⏰ ${data["time"]}",
+                        "📍 ${data["location"]} ⏰ in ${data["time"]}m",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
