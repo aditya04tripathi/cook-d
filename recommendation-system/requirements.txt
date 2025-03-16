@@ -1,0 +1,11 @@
+flask
+requests
+loguru
+pydantic
+pandas
+tempfile
+logging
+os
+typing
+langflow
+langchain-core
