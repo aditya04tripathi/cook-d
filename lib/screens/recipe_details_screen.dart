@@ -17,7 +17,7 @@ class RecipeDetailPage extends StatelessWidget {
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.4,
             child:
-                dish["image"].isNotEmpty
+                dish["image"] != null
                     ? Image(
                       image: CachedNetworkImageProvider(dish["image"]),
                       fit: BoxFit.cover,
@@ -42,54 +42,42 @@ class RecipeDetailPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  dish["desc"],
-                  style: TextStyle(fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
+                dish["description"] != null
+                    ? Text(
+                      dish["description"],
+                      style: TextStyle(fontSize: 14),
+                      textAlign: TextAlign.center,
+                    )
+                    : SizedBox(),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.star),
-                    Text(dish["rating"].toString(), style: TextStyle()),
+                    Icon(Icons.location_on_outlined),
+                    Text(dish["location"] ?? "Unknown", style: TextStyle()),
+                    const SizedBox(width: 16),
+                    Icon(Icons.timer_outlined),
+                    Text(dish["time"] ?? "Unknown", style: TextStyle()),
                     const SizedBox(width: 16),
                     Icon(Icons.local_fire_department_outlined),
-                    Text("${dish["energy"]}kcal", style: TextStyle()),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Text(
-                      'Ingredients',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '${dish["ingredients"].length} item(s)',
+                      "${dish["macros"] != null ? dish["macros"]["Energy"].split(' ')[0] : "Unknown"} kJ",
                       style: TextStyle(),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 40,
-                  child: ListView.separated(
-                    itemCount: dish["ingredients"].length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final ingredient = dish["ingredients"][index];
-                      return _buildIngredientItem(context, ingredient);
-                    },
-                    separatorBuilder: (context, index) => SizedBox(width: 8),
-                  ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.group_outlined),
+                    Text("${dish["spots"] ?? 0} spots", style: TextStyle()),
+                  ],
                 ),
                 const SizedBox(height: 24),
-                dish["allergy"].isNotEmpty
+                _buildMacroNutrients(context, dish["macros"]),
+                const SizedBox(height: 24),
+                dish["allergy"] != null && (dish["allergy"] as List).isNotEmpty
                     ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -101,24 +89,24 @@ class RecipeDetailPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${dish["allergy"].length} item(s)',
+                          '${(dish["allergy"] as List).length} item(s)',
                           style: TextStyle(),
                         ),
                       ],
                     )
                     : SizedBox(),
-                dish['allergy'].isNotEmpty
+                dish["allergy"] != null && (dish["allergy"] as List).isNotEmpty
                     ? const SizedBox(height: 16)
                     : SizedBox(),
-                dish["allergy"].isNotEmpty
+                dish["allergy"] != null && (dish["allergy"] as List).isNotEmpty
                     ? SizedBox(
                       height: 40,
                       child: ListView.separated(
-                        itemCount: dish["allergy"].length,
+                        itemCount: (dish["allergy"] as List).length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final ingredient = dish["allergy"][index];
-                          return _buildAllergenItem(context, ingredient);
+                          final allergen = dish["allergy"][index];
+                          return _buildAllergenItem(context, allergen);
                         },
                         separatorBuilder:
                             (context, index) => SizedBox(width: 8),
@@ -133,24 +121,39 @@ class RecipeDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildIngredientItem(BuildContext context, String name) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      constraints: BoxConstraints(minWidth: 100),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            name,
-            style: TextStyle(color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+  Widget _buildMacroNutrients(
+    BuildContext context,
+    Map<String, dynamic>? macros,
+  ) {
+    if (macros == null) return SizedBox();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Nutritional Information',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children:
+              macros.entries.map((entry) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    "${entry.key}: ${entry.value}",
+                    style: TextStyle(fontSize: 14),
+                  ),
+                );
+              }).toList(),
+        ),
+      ],
     );
   }
 

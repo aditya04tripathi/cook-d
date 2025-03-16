@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cook_d/screens/home_page.dart';
-import 'package:cook_d/screens/login_page.dart';
-import 'package:cook_d/screens/profile_page.dart';
+import 'package:cook_d/screens/home_screen.dart';
+import 'package:cook_d/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -47,7 +45,11 @@ class _MyAppState extends State<MyApp> {
           } else if (snapshot.hasError) {
             return const Center(child: Text('Something went wrong!'));
           } else if (snapshot.hasData) {
-            return HomePage();
+            if (snapshot.data != null) {
+              return HomePage();
+            } else {
+              return const LoginScreen();
+            }
           } else {
             return const LoginScreen();
           }

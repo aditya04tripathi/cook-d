@@ -1,5 +1,5 @@
-import 'package:cook_d/screens/login_page.dart';
-import 'package:cook_d/screens/privacy_policy.dart';
+import 'package:cook_d/screens/login_screen.dart';
+import 'package:cook_d/screens/privacy_policy_screen.dart';
 import 'package:cook_d/screens/tnc_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
         leading: IconButton(
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
         title: const Text('Profile', style: TextStyle(color: Colors.white)),
@@ -41,19 +41,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     CircleAvatar(
                       radius: 50,
                       child: Text(
-                        FirebaseAuth.instance.currentUser!.displayName ??
+                        FirebaseAuth.instance.currentUser?.displayName!
+                                .substring(0, 2)
+                                .toUpperCase() ??
                             "User".substring(0, 2).toUpperCase(),
                         style: TextStyle(fontSize: 36),
                       ),
                     ),
                     Text(
-                      "${FirebaseAuth.instance.currentUser!.displayName}",
+                      FirebaseAuth.instance.currentUser?.displayName ?? "User",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(FirebaseAuth.instance.currentUser!.email!),
+                    Text(FirebaseAuth.instance.currentUser?.email ?? ""),
                   ],
                 ),
               ),

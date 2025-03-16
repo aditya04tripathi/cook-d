@@ -16,9 +16,11 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordHidden = true;
 
-  final TextEditingController emailController = TextEditingController(text: "");
+  final TextEditingController emailController = TextEditingController(
+    text: "atri0048@student.monash.edu",
+  );
   final TextEditingController passwordController = TextEditingController(
-    text: "",
+    text: "1234567890",
   );
 
   void loginUser() async {

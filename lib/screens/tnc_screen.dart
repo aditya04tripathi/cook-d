@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TncScreen extends StatelessWidget {
   const TncScreen({super.key});
@@ -10,7 +11,7 @@ class TncScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.chevron_left_rounded, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
         ),
         title: const Text(

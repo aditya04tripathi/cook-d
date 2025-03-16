@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cook_d/screens/add_screen.dart';
-import 'package:cook_d/screens/recipe_details.dart';
-import 'package:cook_d/screens/profile_page.dart';
+import 'package:cook_d/screens/recipe_details_screen.dart';
+import 'package:cook_d/screens/profile_screen.dart';
 import 'package:cook_d/widgets/dish_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -81,6 +81,7 @@ class HomePage extends StatelessWidget {
             } else {
               final dishes = snapshot.data as QuerySnapshot;
               if (dishes.docs.isNotEmpty) {
+                debugPrint("${dishes.docs.first.data()}");
                 return HorizontalPagesWidget(dishes: dishes);
               }
               return SizedBox();

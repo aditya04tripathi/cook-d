@@ -1,4 +1,4 @@
-import 'package:cook_d/screens/login_page.dart';
+import 'package:cook_d/screens/login_screen.dart';
 import 'package:cook_d/widgets/custom_button.dart';
 import 'package:cook_d/widgets/custom_text_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
