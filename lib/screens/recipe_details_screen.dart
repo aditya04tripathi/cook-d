@@ -3,12 +3,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class RecipeDetailPage extends StatelessWidget {
-  const RecipeDetailPage({Key? key, required this.dish}) : super(key: key);
+  const RecipeDetailPage({super.key, required this.dish});
 
   final QueryDocumentSnapshot<Object?> dish;
 
+  String? _getMacroValue(List<dynamic>? macros, String key) {
+    if (macros == null) return null;
+    for (var macro in macros) {
+      if (macro is String && macro.startsWith('$key:')) {
+        return macro.substring(key.length + 1).trim();
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Get energy value from macros list for display in the top section
+    final List<dynamic>? macrosList = dish["macros"];
+    final String energyValue =
+        _getMacroValue(macrosList, 'Energy')?.split(' ')[0] ?? 'Unknown';
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,10 +75,7 @@ class RecipeDetailPage extends StatelessWidget {
                     Text(dish["time"] ?? "Unknown", style: TextStyle()),
                     const SizedBox(width: 16),
                     Icon(Icons.local_fire_department_outlined),
-                    Text(
-                      "${dish["macros"] != null ? dish["macros"]["Energy"].split(' ')[0] : "Unknown"} kJ",
-                      style: TextStyle(),
-                    ),
+                    Text("$energyValue kJ", style: TextStyle()),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -121,37 +133,59 @@ class RecipeDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMacroNutrients(
-    BuildContext context,
-    Map<String, dynamic>? macros,
-  ) {
-    if (macros == null) return SizedBox();
+  Widget _buildMacroNutrients(BuildContext context, List<dynamic>? macros) {
+    if (macros == null || macros.isEmpty) return SizedBox();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Nutritional Information',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Nutritional Information',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text('${macros.length} item(s)', style: TextStyle()),
+          ],
         ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children:
-              macros.entries.map((entry) {
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    "${entry.key}: ${entry.value}",
-                    style: TextStyle(fontSize: 14),
-                  ),
-                );
-              }).toList(),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 40,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: macros.length,
+            itemBuilder: (context, index) {
+              final macro = macros[index];
+              if (macro is String) {
+                final parts = macro.split(':');
+                if (parts.length >= 2) {
+                  final key = parts[0].trim();
+                  final value = parts.sublist(1).join(':').trim();
+                  return Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    constraints: BoxConstraints(minWidth: 100),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "$key: $value",
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }
+              return SizedBox();
+            },
+            separatorBuilder: (context, index) => SizedBox(width: 8),
+          ),
         ),
       ],
     );
